@@ -1,3 +1,4 @@
+import axios from 'axios';
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
@@ -28,7 +29,7 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+//const followersArray = [];
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -58,3 +59,72 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+function addGithubData(githubName) {
+
+  axios.get(`https://api.github.com/users/${githubName}`)
+    // step 1
+    .then(response => {
+      const githubData = response.data;
+      // step 4
+      document.querySelector('.cards').appendChild(cardMaker(githubData));
+    })
+    .catch(error => {
+      console.log(`error retrieving data for ${githubName}`)
+      // debugger
+    })
+}
+
+// step 3
+function cardMaker(attrs) {
+  // create elements
+  const card = document.createElement('div'); 
+  const userImg = document.createElement('img'); 
+  const cardInfo = document.createElement('div'); 
+  const name = document.createElement('h3'); 
+  const username = document.createElement('p'); 
+  const location = document.createElement('p'); 
+  const profile = document.createElement('p'); 
+  const githubLink = document.createElement('a'); 
+  const followers = document.createElement('p'); 
+  const following = document.createElement('p'); 
+  const bio = document.createElement('p');
+
+  // nest elements where they are supposed to be
+  card.appendChild(userImg); 
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(name); 
+  cardInfo.appendChild(username); 
+  cardInfo.appendChild(location); 
+  cardInfo.appendChild(profile); 
+  cardInfo.appendChild(followers); 
+  cardInfo.appendChild(following); 
+  cardInfo.appendChild(bio); 
+  profile.appendChild(githubLink); 
+
+  // add necessary classes
+  card.classList.add('card'); 
+  name.classList.add('name'); 
+  username.classList.add('username'); 
+
+  // add content to each element
+  userImg.src = attrs.avatar_url; 
+  name.textContent = attrs.name; 
+  username.textContent = attrs.username; 
+  location.textContent = `Location: ${attrs.location}`; 
+  githubLink.href = attrs.url; 
+  githubLink.textContent = attrs.url; 
+  followers.textContent = `Followers: ${attrs.followers}`; 
+  following.textContent = `Following: ${attrs.following}`; 
+  bio.textContent = `Bio: ${attrs.bio}`; 
+
+  // ALWAYS RETURN SOMETHING (parent div)
+  return card
+}
+
+// add myself
+addGithubData('ntilbe')
+
+// step 5
+const followersArray = ['tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell', ];
+followersArray.forEach(username => addGithubData(`${username}`))
